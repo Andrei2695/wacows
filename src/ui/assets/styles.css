@@ -1,0 +1,18 @@
+:root {
+  --bg-custom-primary: #0d821e;
+  --bg-custom-primary-gradiend_1: #0d821e;
+  --bg-custom-primary-gradiend_2: #302508;
+  --bg-custom-menu: #f0f0f0;
+}
+.bg-primary {
+  background: linear-gradient(
+    135deg,
+    var(--bg-custom-primary-gradiend_1),
+    var(--bg-custom-primary-gradiend_2)
+  );
+}
+
+.text-primary {
+  --bs-text-opacity: 1;
+  color: #0d821e !important;
+}
