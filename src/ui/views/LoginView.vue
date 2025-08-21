@@ -11,86 +11,95 @@
     <div class="col-12 col-md-6 d-flex align-items-center justify-content-center bg-white">
       <div class="card border-0 shadow-lg py-5 px-4 " style="width: 100%; max-width: 400px;">
         <h2 class="text-center mb-4 text-primary">{{ Constantes.LABEL_INICIAR_SESION }}</h2>
-        <form @submit.prevent="doLogin" autocomplete="off" novalidate>
+        <form @submit.prevent="login" autocomplete="off" novalidate>
           <div class="form-floating mb-3">
             <label for="txtUsuario">{{ Constantes.LABEL_USUARIO }}</label>
-            <input type="text" :class="['form-control', errores.usuario && 'is-invalid']" id="txtUsuario" v-model="user"
-              :disabled="deshabilitarUsuarioYContrasena" />
-            <div class="invalid-feedback" v-if="errores.usuario">
-              {{ errores.usuario }}
+            <input type="text" :class="['form-control', errores.nombre && 'is-invalid']" id="txtUsuario"
+              v-model="nombre" :disabled="deshabilitarUsuarioYContrasena" />
+            <div class="invalid-feedback" v-if="errores.nombre">
+              {{ errores.nombre }}
             </div>
           </div>
           <div class="form-floating mb-3 position-relative">
             <label for="txtContrasena"> {{ Constantes.LABEL_CONTRASENA }}</label>
-            <input :type="showPass ? 'text' : 'password'" :class="['form-control', errores.contrasena && 'is-invalid']"
-              id="txtContrasena" v-model="contrasena" :disabled="deshabilitarUsuarioYContrasena" />
+            <input :type="showPassword ? 'text' : 'password'"
+              :class="['form-control', errores.contrasena && 'is-invalid']" id="txtContrasena" v-model="contrasena"
+              :disabled="deshabilitarUsuarioYContrasena" />
             <div class="invalid-feedback" v-if="errores.contrasena">
               {{ errores.contrasena }}
             </div>
             <button type="button"
               class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
-              @click="mostrarContrasena" :disabled="deshabilitarUsuarioYContrasena">
-              <EyeOff v-if="showPass" :size="20" />
+              @click="showContrasena" :disabled="deshabilitarUsuarioYContrasena">
+              <EyeOff v-if="showPassword" :size="20" />
               <Eye v-else :size="20" />
             </button>
           </div>
           <transition name="fade">
-            <div v-if="requiereFinca" class="mb-3">
+            <div v-if="showSeccionFinca" class="mb-3">
               <label for="fincaSelect" class="form-label">Finca</label>
-              <select class="form-select" v-model="fincaSeleccionada" :disabled="cargando">
-                <option value="1">Prueba 1</option>
-                <option value="2">Prueba 2</option>
+              <select class="form-select" v-model="selectedFinca">
+                <option value="1">Finca 1</option>
+                <option value="2">Finca 2</option>
               </select>
             </div>
           </transition>
-          <button class="btn btn-primary w-100" :disabled="cargando" @click="doLogin">
-            <span v-if="cargando" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <span v-if="!requiereFinca">Continuar</span>
+          <button class="btn btn-primary w-100" :disabled="disable" type="submit">
+            <span v-if="disable" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <span v-if="!showSeccionFinca">Continuar</span>
             <span v-else>Ingresar</span>
           </button>
         </form>
       </div>
     </div>
   </div>
-  <Toast ref="toastRef" />
+  <Toast ref="refToast" />
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, type Reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useAuthStore } from '@/ui/stores/auth'
+import { useSessionStore } from '@/ui/stores'
 import { Constantes } from '@/ui/utils'
 
 import Toast from '@/ui/components/shared/Toast.vue'
 
-const user = ref('')
+import { LoginUserUseCase } from '@/application/Usecases/LoginUserUseCase'
+import { SessionRepository } from '@/infrastructure/Repositories/SessionRepository'
+import { SessionService } from '@/infrastructure/Services/SessionService'
+
+
+
+
+const nombre = ref('')
 const contrasena = ref('')
-const requiereFinca = ref(false)
-const cargando = ref(false)
-const showPass = ref(false)
-const fincaSeleccionada = ref(null)
-const toastRef = ref()
+const disable = ref(false)
+const showPassword = ref(false)
+const showSeccionFinca = ref(false)
+const selectedFinca = ref(null)
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const refToast = ref()
 const router = useRouter()
-const authStore = useAuthStore()
+const sessionStore = useSessionStore()
 const errores: Reactive<{
-  usuario?: string;
+  nombre?: string;
   contrasena?: string;
 }> = reactive({});
 
 const deshabilitarUsuarioYContrasena = computed(() => {
   return (
-    requiereFinca.value || cargando.value);
+    showSeccionFinca.value || disable.value);
 });
-const mostrarContrasena = () => {
-  showPass.value = !showPass.value
+const showContrasena = () => {
+  showPassword.value = !showPassword.value
 }
 const validarFormulario = () => {
   let esValidoElFormulario: boolean = true
-  if (!user.value) {
-    errores.usuario = `El campo ${Constantes.LABEL_USUARIO} es requerido`;
+  if (!nombre.value) {
+    errores.nombre = `El campo ${Constantes.LABEL_USUARIO} es requerido`;
     esValidoElFormulario = false;
   } else {
-    errores.usuario = undefined;
+    errores.nombre = undefined;
   }
   if (!contrasena.value) {
     errores.contrasena = `El campo ${Constantes.LABEL_CONTRASENA} es requerido`;
@@ -100,40 +109,59 @@ const validarFormulario = () => {
   }
   return esValidoElFormulario
 }
+const login = async () => {
+  try {
+    if (!validarFormulario()) return
 
-const doLogin = async () => {
-  if (requiereFinca.value) {
-    if (!fincaSeleccionada.value) {
-      toastRef.value?.show('Debe seleccionar una finca', 'warning')
+
+    if (showSeccionFinca.value) {
+      if (!selectedFinca.value) {
+        refToast.value?.show(Constantes.FINCA_REQUERIDA, 'warning')
+        return
+      }
+
+      const loginUseCase = new LoginUserUseCase(
+        new SessionRepository(new SessionService())
+      )
+      const response = await loginUseCase.ExecuteAsync(nombre.value, contrasena.value)
+
+      if (response) {
+        sessionStore.setSession(
+          response,
+          response.fincas.find(s => s.id == selectedFinca.value)?.nombre
+        )
+        router.push('/')
+      } else {
+        refToast.value?.show(Constantes.ERROR_CREDENCIALES_INVALIDOS, 'danger')
+      }
       return
     }
-    // authStore.seleccionarFinca(fincaSeleccionada.value)
-    localStorage.setItem('selectedFinca', JSON.stringify(fincaSeleccionada.value))
-    router.push('/')
-    return
-  }
-  if (!validarFormulario()) {
-    return
-  }
-  cargando.value = true
+    const loginUseCase = new LoginUserUseCase(
+      new SessionRepository(new SessionService())
+    )
+    const response = await loginUseCase.ExecuteAsync(nombre.value, contrasena.value)
 
-  try {
-    const { success, requiereSeleccionFinca } = await authStore.login(user.value, contrasena.value)
-
-    if (success) {
-      if (requiereSeleccionFinca) {
-        requiereFinca.value = true
+    if (response !== null) {
+      if (response.fincas.length > 1) {
+        disable.value = true
+        await delay(1000);
+        showSeccionFinca.value = true
       } else {
+        showSeccionFinca.value = false
+        sessionStore.setSession(
+          response, response.fincas[0].nombre)
         router.push('/')
       }
     } else {
-      toastRef.value?.show(Constantes.ERROR_CREDENCIALES_INVALIDOS, 'danger')
+      refToast.value?.show(Constantes.ERROR_CREDENCIALES_INVALIDOS, 'danger')
     }
   } catch (error) {
-    toastRef.value?.show(Constantes.ERROR_GENERAL, 'danger')
+    console.error('Error durante el login:', error)
+    refToast.value?.show(Constantes.ERROR_GENERAL, 'danger')
   } finally {
-    cargando.value = false
+    disable.value = false
   }
 }
+
 
 </script>

@@ -3,8 +3,7 @@
     <!-- Logo o nombre de la app -->
     <div class="d-flex align-items-center">
       <img src="@/ui/assets/logo.png" alt="Logo" height="26" class="me-3" />
-      <h1>dfdd</h1>
-      <!-- <h1 class="fs-5 mb-0 fw-semibold custom-color ">{{ userStore.fincaSeleccionada?.nombre || 'Finca' }}</h1> -->
+      <h1 class="fs-5 mb-0 fw-semibold custom-color ">{{ LocalStorageService.get('fincaSeleccionada') || 'Finca' }}</h1>
     </div>
     <!-- Acciones (carrito + logout) -->
     <div class="d-flex align-items-center gap-4">
@@ -20,7 +19,7 @@
       <div class="vr"></div>
       <!-- Logout -->
       <button class="btn  btn-custom-icon d-flex align-items-center gap-2 p-0 border-0 bg-transparent"
-        @click="logout">dd
+        @click="logout">
         <LogOut :size="22" />
       </button>
     </div>
@@ -28,19 +27,16 @@
 </template>
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/ui/stores/auth'
-/*import { useFarmStore } from '@/stores/farmStore'*/
+import { useSessionStore } from '@/ui/stores'
+import { LocalStorageService } from '@/infrastructure/Services/LocalStorageService'
 
-const authStore = useAuthStore()
-/*const farmStore = useFarmStore()*/
+const sessionStore = useSessionStore()
 const router = useRouter()
 
 const cartItemCount = 3 // temporal
 
 function logout() {
-  authStore.logout()
-  /*farmStore.clear()*/
-  localStorage.clear()
+  sessionStore.cleanSession()
   router.push('/login')
 }
 </script>

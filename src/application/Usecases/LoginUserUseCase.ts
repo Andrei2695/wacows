@@ -1,9 +1,10 @@
-import type { IAuthRepository } from '@/domain/Interfaces/IAuthRepository'
+import type { ISession } from '@/domain/Entities'
+import type { ISessionRepository } from '@/domain/Repositories/ISessionRepository'
 
 export class LoginUserUseCase {
-  constructor(private repository: IAuthRepository) {}
+  constructor(private repository: ISessionRepository) {}
 
-  async ExecuteAsync(user: string, password: string) {
-    return await this.repository.login(user, password)
+  async ExecuteAsync(nombre: string, contrasena: string): Promise<ISession | null> {
+    return await this.repository.login(nombre, contrasena)
   }
 }
