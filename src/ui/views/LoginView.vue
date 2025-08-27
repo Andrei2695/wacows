@@ -1,7 +1,8 @@
 <template>
   <div class="d-flex vh-100">
     <!-- Columna izquierda -->
-    <div class="col-6 d-none d-md-flex flex-column justify-content-center align-items-center text-white bg-primary p-5">
+    <div
+      class="col-6 d-none d-md-flex flex-column justify-content-center align-items-center text-white bg-custom-primary p-5">
       <img src="@/ui/assets/logo.png" alt="Logo" class="mb-4" style="width: 120px;" />
       <h1 class="display-5 fw-bold">{{ Constantes.LABEL_BIENVENIDO }}</h1>
       <p class="lead text-light text-center w-75 mt-3">
@@ -13,26 +14,27 @@
         <h2 class="text-center mb-4 text-primary">{{ Constantes.LABEL_INICIAR_SESION }}</h2>
         <form @submit.prevent="login" autocomplete="off" novalidate>
           <div class="form-floating mb-3">
-            <label for="txtUsuario">{{ Constantes.LABEL_USUARIO }}</label>
             <input type="text" :class="['form-control', errores.nombre && 'is-invalid']" id="txtUsuario"
               v-model="nombre" :disabled="deshabilitarUsuarioYContrasena" />
+            <label for="txtUsuario">{{ Constantes.LABEL_USUARIO }}</label>
             <div class="invalid-feedback" v-if="errores.nombre">
               {{ errores.nombre }}
             </div>
           </div>
           <div class="form-floating mb-3 position-relative">
-            <label for="txtContrasena"> {{ Constantes.LABEL_CONTRASENA }}</label>
             <input :type="showPassword ? 'text' : 'password'"
               :class="['form-control', errores.contrasena && 'is-invalid']" id="txtContrasena" v-model="contrasena"
               :disabled="deshabilitarUsuarioYContrasena" />
+            <label for="txtContrasena"> {{ Constantes.LABEL_CONTRASENA
+            }}</label>
             <div class="invalid-feedback" v-if="errores.contrasena">
               {{ errores.contrasena }}
             </div>
             <button type="button"
               class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
               @click="showContrasena" :disabled="deshabilitarUsuarioYContrasena">
-              <EyeOff v-if="showPassword" :size="20" />
-              <Eye v-else :size="20" />
+              <IconEyeOff v-if="showPassword" :size="20" />
+              <IconEye v-else :size="20" />
             </button>
           </div>
           <transition name="fade">

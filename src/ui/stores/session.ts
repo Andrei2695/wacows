@@ -29,5 +29,16 @@ export const useSessionStore = defineStore(Constantes.STORE_SESSION, {
     getSession(): ISession | null {
       return this.session
     },
+    loadSession() {
+      const token = LocalStorageService.get('token')
+      const user = LocalStorageService.get('user')
+
+      if (token && user) {
+        this.session = {
+          token,
+          user: JSON.parse(user),
+        } as ISession
+      }
+    },
   },
 })

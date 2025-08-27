@@ -11,6 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from '@/ui/components/shared/Sidebar.vue'
-import Header from '@/ui/components/shared/Header.vue'
+import Sidebar from '@/ui/components/Base/Sidebar.vue'
+import Header from '@/ui/components/Base/Header.vue'
 </script>

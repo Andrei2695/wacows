@@ -1,21 +1,41 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-import LoginView from '@/ui/views/LoginView.vue'
-import HomeView from '@/ui/views/Home/HomeView.vue'
-
 import { useSessionStore } from '@/ui/stores'
 
 const routes = [
-  { path: '/login', name: 'Login', component: LoginView, meta: { requiresAuth: false } },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/ui/views/LoginView.vue'),
+    meta: { requiresAuth: false },
+  },
   {
     path: '/',
-    component: HomeView,
+    component: () => import('@/ui/views/Home/HomeView.vue'),
     meta: { requiresAuth: true },
     children: [
       {
         path: '',
         name: 'inicio',
         component: () => import('@/ui/views/InicioView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'animales/lista',
+        name: 'animales',
+        component: () => import('@/ui/views/Animals/AnimalsView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'animales/nuevo',
+        name: 'animalesNuevo',
+        component: () => import('@/ui/views/Animals/NuevoAnimalView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'lots/lista',
+        name: 'lots',
+        component: () => import('@/ui/views/Lots/LotsView.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -28,14 +48,13 @@ const router = createRouter({
 
 router.beforeEach(async (to, _from, next) => {
   const sessionStore = useSessionStore()
-  if (!sessionStore.session?.token) {
-    await sessionStore.cleanSession()
+  if (!sessionStore.session) {
+    sessionStore.loadSession()
   }
-
   if (to.meta.requiresAuth && !sessionStore.isAuthenticated) {
-    next({ name: 'Login' })
-  } else if (to.name === 'Login' && sessionStore.isAuthenticated) {
-    next({ name: 'Home' })
+    next({ name: 'login' })
+  } else if (to.name === 'login' && sessionStore.isAuthenticated) {
+    next({ name: 'inicio' })
   } else {
     next()
   }

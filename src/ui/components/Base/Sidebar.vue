@@ -3,14 +3,17 @@
     <!-- Menú -->
     <nav class="sidebar-nav">
       <ul>
-        <!-- Inicio -->
         <li :class="{ active: route.name === 'inicio' }" @click="navigateTo('inicio')">
-          <Home :size="22" />
+          <IconHome :size="22" />
           <span>Inicio</span>
         </li>
         <li :class="{ active: route.name === 'animales' }" @click="navigateTo('animales')">
-          <Tractor :size="22" />
+          <IconTractor :size="22" />
           <span>Animales</span>
+        </li>
+        <li :class="{ active: route.name === 'lots' }" @click="navigateTo('lots')">
+          <IconTractor :size="22" />
+          <span>Lotes</span>
         </li>
       </ul>
     </nav>

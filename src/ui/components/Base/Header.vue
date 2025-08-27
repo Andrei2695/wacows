@@ -9,7 +9,7 @@
     <div class="d-flex align-items-center gap-4">
       <!-- Carrito -->
       <button class="btn btn-custom-icon position-relative p-0 border-0 bg-transparent">
-        <Truck :size="22" />
+        <IconTruck :size="22" />
         <span v-if="cartItemCount > 0"
           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
           {{ cartItemCount }}
@@ -18,9 +18,8 @@
       <!-- Divider (opcional) -->
       <div class="vr"></div>
       <!-- Logout -->
-      <button class="btn  btn-custom-icon d-flex align-items-center gap-2 p-0 border-0 bg-transparent"
-        @click="logout">
-        <LogOut :size="22" />
+      <button class="btn  btn-custom-icon d-flex align-items-center gap-2 p-0 border-0 bg-transparent" @click="logout">
+        <IconLogOut :size="22" />
       </button>
     </div>
   </header>
