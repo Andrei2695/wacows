@@ -50,7 +50,7 @@
           :title="Constantes.LABEL_EDITAR_ANIMAL">
           <IconPencil :size="22" />
         </button>
-        <button v-if="!animalesEnCamion.includes(codigo)" class="btn btn-outline-success"
+        <button v-if="!camionStore.animalesEnCamion.includes(codigo)" class="btn btn-outline-success"
           @click="agregarAlCamion(codigo)" :title="Constantes.LABEL_AGREGAR_AL_CAMION">
           <IconTruck :size="22" />
         </button>
@@ -87,7 +87,7 @@ import { useRouter } from 'vue-router';
 import { type SortType } from "vue3-easy-data-table";
 import { Constantes } from "@/ui/utils";
 import type { IAnimal, ILote } from "@/domain/Entities";
-import { useModalCargandoStore } from '@/ui/stores/index'
+import { useModalCargandoStore, useCamionStore } from '@/ui/stores/index'
 import ChangeLotViewModal from "@/ui/views/Animals/ChangeLotViewModal.vue";
 import Toast from '@/ui/components/shared/Toast.vue'
 
@@ -103,11 +103,11 @@ const sortBy = "codigo";
 const sortType: SortType = "asc";
 const searchField = ref("");
 const searchValue = ref("");
-const animalesEnCamion = ref<number[]>([])
 const animalSeleccionado = ref<IAnimal | null>(null)
 const animales: Ref<IAnimal[]> = ref<IAnimal[]>([]);
 const lotes: Ref<ILote[]> = ref<ILote[]>([]);
 const modalCargandoStore = useModalCargandoStore();
+const camionStore = useCamionStore()
 const nuevoLote = ref()
 const visibleModal = ref(false);
 const formLote = ref<ILote>({ id: 0, nombre: "", estado: "Activo" });
@@ -142,12 +142,10 @@ const cambioLote = (nuevoCodigoLote: number) => {
   }
 }
 const agregarAlCamion = (codigo: number) => {
-  if (!animalesEnCamion.value.includes(codigo)) {
-    animalesEnCamion.value.push(codigo)
-  }
+  camionStore.agregar(codigo);
 }
 const quitarDelCamion = (codigo: number) => {
-  animalesEnCamion.value = animalesEnCamion.value.filter(c => c !== codigo)
+  camionStore.quitar(codigo)
 }
 const verExpediente = (animal: IAnimal) => {
   animalSeleccionado.value = animal
@@ -160,7 +158,7 @@ const editarAnimal = (animal: IAnimal) => {
   });
 }
 const setRowClass = (item: IAnimal) => {
-  return animalesEnCamion.value.includes(item.codigo) ? 'table-camion' : 'undo-table-camion'
+  return camionStore.animalesEnCamion.includes(item.codigo) ? 'table-camion' : 'undo-table-camion'
 }
 const getAnimalByCodigo = (codigo: number): IAnimal => {
   return animales.value.find(a => a.codigo === codigo)!

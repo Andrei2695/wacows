@@ -25,14 +25,16 @@
   </header>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSessionStore } from '@/ui/stores'
+import { useSessionStore, useCamionStore } from '@/ui/stores'
 import { LocalStorageService } from '@/infrastructure/Services/LocalStorageService'
 
 const sessionStore = useSessionStore()
+const camionStore = useCamionStore()
 const router = useRouter()
 
-const cartItemCount = 3 // temporal
+const cartItemCount = computed(() => camionStore.cantidadAnimales)
 
 function logout() {
   sessionStore.cleanSession()
