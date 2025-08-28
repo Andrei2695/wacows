@@ -1,5 +1,5 @@
 export interface ILote {
-  codigo: number
+  id: number
   nombre: string
   estado: string
 }

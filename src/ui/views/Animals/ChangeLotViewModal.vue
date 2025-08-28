@@ -3,10 +3,10 @@
     @cancelar="$emit('cancelar')" @guardar="onGuardar">
     <form>
       <div class="mb-3">
-        <label class="form-label">Nuevo Lote</label>
-        <select v-model="localLote.codigo" class="form-select">
-          <option :value="0">Seleccione una opción</option>
-          <option v-for="est in lotes" :key="est.codigo" :value="est.codigo">
+        <label class="form-label">{{ Constantes.LOTE_NUEVO }}</label>
+        <select v-model="localLote.id" class="form-select">
+          <option :value="0">{{ Constantes.SELECT_LABEL }}</option>
+          <option v-for="est in lotes" :key="est.id" :value="est.id">
             {{ est.nombre }}
           </option>
         </select>
@@ -57,7 +57,7 @@ const cargarLotes = async (): Promise<void> => {
 const validar = () => {
   errors.loteSeleccionado = ""
 
-  if (!localLote.value.codigo || localLote.value.codigo === 0) {
+  if (!localLote.value.id || localLote.value.id === 0) {
     errors.loteSeleccionado = Constantes.ERROR_CAMBIO_LOTE_REQUERIDO
     return false
   }
@@ -65,7 +65,7 @@ const validar = () => {
 }
 const onGuardar = () => {
   if (validar()) {
-    emit("guardar", localLote.value.codigo)
+    emit("guardar", localLote.value.id)
   }
 }
 

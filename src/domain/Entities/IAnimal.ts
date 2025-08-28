@@ -3,11 +3,13 @@ export interface IAnimal {
   foto: string
   codigo: number
   nombre: string
-  raza: string
-  genero: string
-  edad: string
-  color: string
-  caracteristicas: string
-  ubicacion: string
+  idRaza: number
+  idCategoria: number
+  edad: number
+  idColor: number
+  idLote: number
   estado: string
+  fechaNacimiento?: Date
+  fechaEntrada?: Date
+  idMotivoEntrada: number
 }

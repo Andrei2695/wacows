@@ -26,9 +26,9 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        path: 'animales/nuevo',
-        name: 'animalesNuevo',
-        component: () => import('@/ui/views/Animals/NuevoAnimalView.vue'),
+        path: 'animales/addedit',
+        name: 'animales/addedit',
+        component: () => import('@/ui/views/Animals/AddUpdateAnimalsView.vue'),
         meta: { requiresAuth: true },
       },
       {

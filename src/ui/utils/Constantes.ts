@@ -7,6 +7,12 @@ const LABEL_BIENVENIDO = 'Hola, Bienvenido!'
 const LABEL_BIENVENIDO_DETALLE =
   'Bienvenido al sistema ganadero. Gestiona tus animales de forma simple y rápida.'
 const LABEL_INICIAR_SESION = 'Iniciar sesión'
+const LABEL_EDITAR_ANIMAL = 'Editar Animal'
+const LABEL_AGREGAR_ANIMAL = 'Agregar Animal'
+const LABEL_CAMBIAR_DE_LOTE = 'Cambiar de lote'
+const LABEL_VER_EXPEDIENTE = 'Ver expediente'
+const LABEL_AGREGAR_AL_CAMION = 'Agregar al camión'
+const LABEL_QUITAR_DEL_CAMION = 'Quitar del camión'
 
 //Labels Text
 const LABEL_USUARIO = 'Usuario'
@@ -29,6 +35,17 @@ const TOOLTIP_AGREGAR_ANIMAL = 'Agregar Animal'
 const TOOLTIP_AGREGAR_LOTE = 'Agregar Lote'
 //Campos requeridos
 
+//News
+const LOTE_NUEVO = 'Nuevo Lote'
+
+//Select
+const SELECT_LABEL = 'Seleccione una opción'
+
+//Success
+const REGISTRO_INGRESADO_SATISFACTORIAMENTE = 'Registro ingresado satisfactoriamente'
+const LOTE_INACTIVADO_SATISFACTORIAMENTE = 'Lote inactivado satisfactoriamente'
+const LOTE_ACTIVADO_SATISFACTORIAMENTE = 'Lote activado satisfactoriamente'
+
 //Errores
 const ERROR_GENERAL = 'Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.'
 const ERROR_CREDENCIALES_INVALIDOS = 'Credenciales incorrectas.'
@@ -48,6 +65,9 @@ export const Constantes = {
   LABEL_LOTS,
   LABEL_GUARDAR,
   LABEL_CANCELAR,
+  LABEL_AGREGAR_AL_CAMION,
+  LABEL_QUITAR_DEL_CAMION,
+  LABEL_AGREGAR_ANIMAL,
 
   PLACEHOLDER_BUSCAR_ANIMAL,
 
@@ -60,4 +80,14 @@ export const Constantes = {
   ERROR_GENERAL,
   ERROR_CREDENCIALES_INVALIDOS,
   ERROR_CAMBIO_LOTE_REQUERIDO,
+
+  REGISTRO_INGRESADO_SATISFACTORIAMENTE,
+  LOTE_INACTIVADO_SATISFACTORIAMENTE,
+  LOTE_ACTIVADO_SATISFACTORIAMENTE,
+
+  LOTE_NUEVO,
+  SELECT_LABEL,
+  LABEL_EDITAR_ANIMAL,
+  LABEL_CAMBIAR_DE_LOTE,
+  LABEL_VER_EXPEDIENTE,
 }

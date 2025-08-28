@@ -27,12 +27,12 @@
     buttons-pagination alternating :body-row-class-name="setRowClass" :rows-per-page="5" :search-field="searchField"
     :search-value="searchValue" :sort-by="sortBy" :sort-type="sortType" table-class-name="customize-table"
     header-text-direction="center" body-text-direction="center">
-    <template #item-foto="{ foto, color }">
+    <template #item-foto="{ foto, idColor }">
       <img :src="foto" alt="animal" class="rounded-circle" :style="{
         width: '50px',
         height: '50px',
         objectFit: 'cover',
-        border: '5px solid ' + color
+        border: '3px solid ' + idColor
       }" />
     </template>
     <template #item-estado="{ estado }">
@@ -47,22 +47,23 @@
     <template #item-acciones="{ codigo }">
       <div class="btn-group btn-group-sm">
         <button class="btn btn-outline-secondary" @click="editarAnimal(getAnimalByCodigo(codigo))"
-          title="Editar Animal">
+          :title="Constantes.LABEL_EDITAR_ANIMAL">
           <IconPencil :size="22" />
         </button>
         <button v-if="!animalesEnCamion.includes(codigo)" class="btn btn-outline-success"
-          @click="agregarAlCamion(codigo)" title="Agregar al camión">
+          @click="agregarAlCamion(codigo)" :title="Constantes.LABEL_AGREGAR_AL_CAMION">
           <IconTruck :size="22" />
         </button>
-        <button v-else class="btn btn-outline-danger" @click="quitarDelCamion(codigo)" title="Quitar del camión">
+        <button v-else class="btn btn-outline-danger" @click="quitarDelCamion(codigo)"
+          :title="Constantes.LABEL_QUITAR_DEL_CAMION">
           <IconTruck :size="22" />
         </button>
         <button class="btn btn-outline-secondary" @click="abrirModalLote(getAnimalByCodigo(codigo))"
-          title="Cambiar de lote">
+          :title="Constantes.LABEL_CAMBIAR_DE_LOTE">
           <IconMapPinXInside :size="22" />
         </button>
         <button class="btn btn-outline-secondary" @click="verExpediente(getAnimalByCodigo(codigo))"
-          title="Ver expediente">
+          :title="Constantes.LABEL_VER_EXPEDIENTE">
           <IconFileHeart :size="22" />
         </button>
       </div>
@@ -75,7 +76,7 @@
         style="width: 100px; height: 80px;" />
     </template>
   </EasyDataTable>
-  <ChangeLotViewModal :visible="visibleModal" :lote="formLote" :animal="animalSeleccionado" @cancelar="cerrarModal"
+  <ChangeLotViewModal :visible="visibleModal" :lote="formLote" :animal="animalSeleccionado!" @cancelar="cerrarModal"
     @guardar="cambioLote" />
   <Toast ref="refToast" />
 </template>
@@ -107,25 +108,23 @@ const animalSeleccionado = ref<IAnimal | null>(null)
 const animales: Ref<IAnimal[]> = ref<IAnimal[]>([]);
 const lotes: Ref<ILote[]> = ref<ILote[]>([]);
 const modalCargandoStore = useModalCargandoStore();
-const nuevoLote = ref('')
+const nuevoLote = ref()
 const visibleModal = ref(false);
-const formLote = ref<ILote>({ codigo: 0, nombre: "", estado: "Activo" });
+const formLote = ref<ILote>({ id: 0, nombre: "", estado: "Activo" });
 const refToast = ref()
 const router = useRouter();
 const headers = [
   { text: 'Arete', value: 'codigo', sortable: true },
   { text: 'Foto', value: 'foto' },
   { text: 'Nombre', value: 'nombre', sortable: true },
-  { text: 'Raza', value: 'raza' },
-  { text: 'Edad', value: 'edad' },
-  { text: 'Lote', value: 'ubicacion', sortable: true },
+  { text: 'Edad/Meses', value: 'edad' },
   { text: 'Estado', value: 'estado' },
   { text: 'Acciones', value: 'acciones' }
 ]
 
 const abrirModalLote = (animal: IAnimal) => {
   animalSeleccionado.value = animal
-  formLote.value = { codigo: 0, nombre: "", estado: "Activo" }
+  formLote.value = { id: 0, nombre: "", estado: "Activo" }
   visibleModal.value = true
 }
 const cerrarModal = () => {
@@ -133,9 +132,9 @@ const cerrarModal = () => {
 };
 const cambioLote = (nuevoCodigoLote: number) => {
   if (animalSeleccionado.value) {
-    const loteSeleccionado = lotes.value.find(l => l.codigo === nuevoCodigoLote)
+    const loteSeleccionado = lotes.value.find(l => l.id === nuevoCodigoLote)
     if (loteSeleccionado) {
-      animalSeleccionado.value.ubicacion = loteSeleccionado.nombre
+      animalSeleccionado.value.idLote = loteSeleccionado.id
       refToast.value?.show(`${animalSeleccionado.value.nombre} movido satisfactoriamente`, 'success')
     }
     animalSeleccionado.value = null
@@ -152,11 +151,11 @@ const quitarDelCamion = (codigo: number) => {
 }
 const verExpediente = (animal: IAnimal) => {
   animalSeleccionado.value = animal
-  nuevoLote.value = animal.ubicacion
+  nuevoLote.value = animal.idLote
 }
 const editarAnimal = (animal: IAnimal) => {
   router.push({
-    path: '/animales/nuevo',
+    path: '/animales/addedit',
     query: { id: animal.id }
   });
 }
@@ -197,7 +196,7 @@ const cargarAnimales = async (): Promise<void> => {
   }
 };
 const iraNuevoAnimal = () => {
-  router.push('/animales/nuevo');
+  router.push('/animales/addedit');
 };
 
 onMounted(async () => {

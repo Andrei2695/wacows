@@ -57,12 +57,12 @@ const sortBy = "codigo";
 const sortType: SortType = "asc";
 const visibleModal = ref(false);
 const modo = ref<"agregar" | "editar">("agregar");
-const formLote = ref<ILote>({ codigo: 0, nombre: "", estado: "Activo" });
+const formLote = ref<ILote>({ id: 0, nombre: "", estado: "Activo" });
 const lotes: Ref<ILote[]> = ref<ILote[]>([]);
 const modalCargandoStore = useModalCargandoStore();
 const refToast = ref()
 const headers = [
-  { text: "Código", value: "codigo", sortable: true },
+  { text: "Código", value: "id", sortable: true },
   { text: "Nombre", value: "nombre", sortable: true },
   { text: "Estado", value: "estado" },
   { text: "Acciones", value: "acciones" }
@@ -71,7 +71,7 @@ const headers = [
 
 const abrirModal = () => {
   modo.value = "agregar";
-  formLote.value = { codigo: lotes.value.length + 1, nombre: "", estado: "Activo" };
+  formLote.value = { id: lotes.value.length + 1, nombre: "", estado: "Activo" };
   visibleModal.value = true;
 };
 const editarModal = (lote: ILote) => {
@@ -86,27 +86,27 @@ const guardarLote = (lote: ILote) => {
   if (modo.value === "agregar") {
     lotes.value.push(lote);
   } else if (modo.value === "editar") {
-    const index = lotes.value.findIndex(l => l.codigo === lote.codigo);
+    const index = lotes.value.findIndex(l => l.id === lote.id);
     if (index !== -1) lotes.value[index] = lote;
   }
   cerrarModal();
-  refToast.value?.show("Registro ingresado satisfactoriamente", 'success')
+  refToast.value?.show(Constantes.REGISTRO_INGRESADO_SATISFACTORIAMENTE, 'success')
 };
 
 const cambiarEstado = (codigo: number) => {
-  const lote = lotes.value.find(l => l.codigo === codigo);
+  const lote = lotes.value.find(l => l.id === codigo);
   if (lote) {
     lote.estado = lote.estado === "Activo" ? "Inactivo" : "Activo";
     const mensaje = lote.estado === "Activo"
-      ? "Lote activado satisfactoriamente"
-      : "Lote inactivado satisfactoriamente";
+      ? Constantes.LOTE_ACTIVADO_SATISFACTORIAMENTE
+      : Constantes.LOTE_INACTIVADO_SATISFACTORIAMENTE;
 
     refToast.value?.show(mensaje, "success");
   }
 };
 
 const getLoteByCodigo = (codigo: number): ILote => {
-  return lotes.value.find(a => a.codigo === codigo)!;
+  return lotes.value.find(a => a.id === codigo)!;
 };
 const cargarLotes = async (): Promise<void> => {
   try {

@@ -4,7 +4,7 @@
     <form>
       <div v-if="modo === 'editar'" class="mb-3">
         <label class="form-label">Código</label>
-        <input type="text" class="form-control" v-model="localLote.codigo" disabled />
+        <input type="text" class="form-control" v-model="localLote.id" disabled />
       </div>
 
       <div class="mb-3">

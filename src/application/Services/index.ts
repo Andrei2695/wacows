@@ -1,3 +1,6 @@
 export type { IRazaService } from './IRazaService'
 export type { ILoteService } from './ILoteService'
 export type { IAnimalService } from './IAnimalService'
+export type { ICategoriaService } from './ICategoriaService'
+export type { IColorService } from './IColorService'
+export type { IMotivoEntradaService } from './IMotivoEntradaService'
